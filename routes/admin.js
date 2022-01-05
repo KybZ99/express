@@ -16,7 +16,12 @@ router.all("*", (req, res, next)=>{
 /* GET home page. */
 router.get('/', (req, res) => {
   //console.log(req.session.admin);
-  res.render('admin/admin', { title: 'Admin' });
+
+  const data = News.find({}, (err, data)=>{
+    console.log(data);
+    res.render('admin/admin', { title: 'Admin', data });
+  });
+  
 });
 
 router.get("/news/add" , (req, res)=>{
@@ -40,7 +45,7 @@ router.post("/news/add" , (req, res)=>{
   newsData.save((err) => { 
     if(err){
       //Jezeli wystapi blad przy zapisie renderujemy od nowa formularz oraz przesylamy bledy
-      res.render("admin/news-form", {title: "Dodaj Artykuł",  errors });
+      res.render("admin/news-form", {title: "Dodaj Artykuł",  errors , body});
       console.log("Błąd przy zapisie");
     }
     else{
@@ -50,6 +55,13 @@ router.post("/news/add" , (req, res)=>{
   });
 
   //res.render("admin/news-form", {title: "Dodaj Artykuł", body, errors })
+});
+
+//Usuwanie
+router.get("/news/delete/:id" , (req, res)=>{
+  News.findByIdAndDelete(req.params.id, (err)=>{
+    res.redirect("/admin");
+  })
 });
 
 
